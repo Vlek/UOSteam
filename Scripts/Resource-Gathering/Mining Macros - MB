@@ -1,0 +1,574 @@
+Magery Version no beetle:
+//1. need 2 full runebooks marked 1 tile south of the mineable locations
+//2. macro assumes you have tinkering and spot at dropoff location to restock ingots
+//3. Organizer agent 'Ore' needs to be configured from your backpack to dropoff container and have the 4 ore graphics and 6 mining gems
+//4. pauses after recalls are set to 2000 for 0Faster Casting. Change to 1750 for 1FC and 1500 for 2FC
+if not @findobject 'IngotsSource'
+promptalias 'IngotsSource'
+endif
+if not @findobject 'OreBookOne'
+promptalias 'OreBookOne'
+endif
+if not @findobject 'OreBookTwo'
+promptalias 'OreBookTwo'
+endif
+if not @findobject 'HomeOre'
+promptalias 'HomeOre'
+endif
+if not listexists 'OreBook'
+createlist 'OreBook'
+pushlist 'OreBook' 'OreBookOne'
+pushlist 'OreBook' 'OreBookTwo'
+endif
+if not listexists 'Runes'
+createlist 'Runes'
+pushlist 'Runes' 5
+pushlist 'Runes' 11
+pushlist 'Runes' 17
+pushlist 'Runes' 23
+pushlist 'Runes' 29
+pushlist 'Runes' 35
+pushlist 'Runes' 41
+pushlist 'Runes' 47
+pushlist 'Runes' 53
+pushlist 'Runes' 59
+pushlist 'Runes' 65
+pushlist 'Runes' 71
+pushlist 'Runes' 77
+pushlist 'Runes' 83
+pushlist 'Runes' 89
+pushlist 'Runes' 95
+endif
+For 0 to 'OreBook'
+For 0 to 'Runes'
+pause 500
+clearjournal
+pause 500
+useobject OreBook[]
+waitforgump 0x554b87f3 5000
+replygump 0x554b87f3 Runes[]
+//tells you which rune you are on, see runelist above
+sysmsg 'Rune' 33
+sysmsg Runes[] 33
+pause 2000
+while not @injournal 'no metal here'
+//use pickaxe to northern tile until specified weight is reached
+pause 300
+usetype 0xe86
+waitfortarget 1000
+targettileoffset 0 -1 0
+// once weight is reached go home, if getting overweight, lower it
+if weight > 475
+useobject 'HomeOre'
+waitforgump 0x554b87f3 5000
+replygump 0x554b87f3 5
+pause 2000
+// organizer to put up ore
+organizer 'Ore'
+while organizing
+endwhile
+// get ingots if low
+if counttype 0x1bf2 0 'backpack' < 20
+useobject 'IngotsSource'
+pause 1000
+movetype 0x1bf2 'IngotsSource' 'backpack' (0 0 0) 0 40
+pause 1000
+endif
+// kits
+while @counttype 0x1eb8 0 'backpack' < 2
+usetype! 0x1eb8
+waitforgump 0x38920abd 15000
+replygump 0x38920abd 8
+waitforgump 0x38920abd 15000
+replygump 0x38920abd 23
+endwhile
+//pickaxes
+while @counttype 0xe86 0 'backpack' < 3
+usetype! 0x1eb8
+waitforgump 0x38920abd 15000
+replygump 0x38920abd 8
+waitforgump 0x38920abd 15000
+replygump 0x38920abd 114
+endwhile
+//recall back to where you were
+useobject OreBook[]
+waitforgump 0x554b87f3 5000
+replygump 0x554b87f3 Runes[]
+pause 2000
+endif
+endwhile
+endfor
+//recall home so ingot container is found
+pause 1000
+useobject 'HomeOre'
+waitforgump 0x554b87f3 5000
+replygump 0x554b87f3 5
+pause 2000
+endfor
+
+
+
+
+
+
+
+Chivalry version no beetle:
+//1. need 2 full runebooks marked 1 tile south of the mineable locations
+//2. macro assumes you have tinkering and spot at dropoff location to restock ingots
+//3. Organizer agent 'Ore' needs to be configured from your backpack to dropoff container and have the 4 ore graphics and 6 mining gems
+//4. pauses after recalls are set to 1500 for 2Faster Casting. Change to 2000 for 0FC and 1000 for 4FC
+if not @findobject 'IngotsSource'
+promptalias 'IngotsSource'
+endif
+if not @findobject 'OreBookOne'
+promptalias 'OreBookOne'
+endif
+if not @findobject 'OreBookTwo'
+promptalias 'OreBookTwo'
+endif
+if not @findobject 'HomeOre'
+promptalias 'HomeOre'
+endif
+if not listexists 'OreBook'
+createlist 'OreBook'
+pushlist 'OreBook' 'OreBookOne'
+pushlist 'OreBook' 'OreBookTwo'
+endif
+if not listexists 'Runes'
+createlist 'Runes'
+pushlist 'Runes' 7
+pushlist 'Runes' 13
+pushlist 'Runes' 19
+pushlist 'Runes' 25
+pushlist 'Runes' 31
+pushlist 'Runes' 37
+pushlist 'Runes' 43
+pushlist 'Runes' 49
+pushlist 'Runes' 55
+pushlist 'Runes' 61
+pushlist 'Runes' 67
+pushlist 'Runes' 73
+pushlist 'Runes' 79
+pushlist 'Runes' 85
+pushlist 'Runes' 91
+pushlist 'Runes' 97
+endif
+For 0 to 'OreBook'
+For 0 to 'Runes'
+pause 500
+clearjournal
+pause 500
+useobject OreBook[]
+waitforgump 0x554b87f3 5000
+replygump 0x554b87f3 Runes[]
+//tells you which rune you are on, see runelist above
+sysmsg 'Rune' 33
+sysmsg Runes[] 33
+pause 1500
+while not @injournal 'no metal here'
+//use pickaxe to northern tile until specified weight is reached
+pause 300
+usetype 0xe86
+waitfortarget 1000
+targettileoffset 0 -1 0
+// once weight is reached go home, if getting overweight, lower it
+if weight > 475
+useobject 'HomeOre'
+waitforgump 0x554b87f3 5000
+replygump 0x554b87f3 7
+pause 1500
+// organizer to put up ore
+organizer 'Ore'
+while organizing
+endwhile
+// get ingots if low
+if counttype 0x1bf2 0 'backpack' < 20
+useobject 'IngotsSource'
+pause 1000
+movetype 0x1bf2 'IngotsSource' 'backpack' (0 0 0) 0 40
+pause 1000
+endif
+// kits
+while @counttype 0x1eb8 0 'backpack' < 2
+usetype! 0x1eb8
+waitforgump 0x38920abd 15000
+replygump 0x38920abd 8
+waitforgump 0x38920abd 15000
+replygump 0x38920abd 23
+endwhile
+//pickaxes
+while @counttype 0xe86 0 'backpack' < 3
+usetype! 0x1eb8
+waitforgump 0x38920abd 15000
+replygump 0x38920abd 8
+waitforgump 0x38920abd 15000
+replygump 0x38920abd 114
+endwhile
+//recall back to where you were
+useobject OreBook[]
+waitforgump 0x554b87f3 5000
+replygump 0x554b87f3 Runes[]
+pause 1500
+endif
+endwhile
+endfor
+//recall home so ingot container is found
+pause 1000
+useobject 'HomeOre'
+waitforgump 0x554b87f3 5000
+replygump 0x554b87f3 7
+pause 1500
+endfor
+
+
+
+
+
+Magery version with fire beetle:
+//1. need 2 full runebooks marked 1 tile south of the mineable locations
+//2. macro assumes you have tinkering
+//3. Set the itemid for MiningDropoff and FireBeetle for your personal setup
+@setalias 'MiningDropoff' 0x411c61df
+@setalias 'FireBeetle' 0x9124a
+if not @findobject 'OreBookOne'
+promptalias 'OreBookOne'
+endif
+if not @findobject 'OreBookTwo'
+promptalias 'OreBookTwo'
+endif
+if not @findobject 'HomeOre'
+promptalias 'HomeOre'
+endif
+if not listexists 'OreBook'
+createlist 'OreBook'
+pushlist 'OreBook' 'OreBookOne'
+pushlist 'OreBook' 'OreBookTwo'
+endif
+if not listexists 'Runes'
+createlist 'Runes'
+pushlist 'Runes' 5
+pushlist 'Runes' 11
+pushlist 'Runes' 17
+pushlist 'Runes' 23
+pushlist 'Runes' 29
+pushlist 'Runes' 35
+pushlist 'Runes' 41
+pushlist 'Runes' 47
+pushlist 'Runes' 53
+pushlist 'Runes' 59
+pushlist 'Runes' 65
+pushlist 'Runes' 71
+pushlist 'Runes' 77
+pushlist 'Runes' 83
+pushlist 'Runes' 89
+pushlist 'Runes' 95
+endif
+For 0 to 'OreBook'
+For 0 to 'Runes'
+pause 250
+clearjournal
+pause 250
+useobject 'FireBeetle'
+pause 700
+useobject OreBook[]
+waitforgump 0x554b87f3 5000
+replygump 0x554b87f3 Runes[]
+//tells you which rune you are on, see runelist above
+sysmsg 'Rune' 33
+sysmsg Runes[] 33
+pause 2000
+useobject 'self'
+pause 500
+while not @injournal 'no metal here'
+//use pickaxe to northern tile until specified weight is reached
+pause 300
+usetype 0xe86
+waitfortarget 1000
+targettileoffset 0 -1 0
+// once weight is reached, smelt
+if weight > 475
+while counttype 0x19b9 'any' 'backpack' > 1
+usetype! 0x19b9
+while waitingfortarget
+endwhile
+target! 'FireBeetle'
+pause 300
+endwhile
+while counttype 0x19b8 'any' 'backpack' > 1
+usetype! 0x19b8
+while waitingfortarget
+endwhile
+target! 'FireBeetle'
+pause 300
+endwhile
+while counttype 0x19ba 'any' 'backpack' > 1
+usetype! 0x19ba
+while waitingfortarget
+endwhile
+target! 'FireBeetle'
+pause 300
+endwhile
+while counttype 0x19b7 'any' 'backpack' > 7
+usetype! 0x19b7
+while waitingfortarget
+endwhile
+target! 'FireBeetle'
+pause 300
+if @injournal 'not enough metal-bearing'
+pause 300
+movetypeoffset 0x19b7 'backpack' 'ground' 0 1 0 'any' 1
+clearjournal
+endif
+endwhile
+endif
+if counttype 0x1bf2 'any' 'backpack' > 1000
+pause 500
+useobject 'FireBeetle'
+pause 700
+useobject 'HomeOre'
+waitforgump 0x554b87f3 5000
+replygump 0x554b87f3 5
+pause 2000
+//Unload Ingots and Jewels
+while counttype 0x1bf2 'any' 'backpack' > 0
+movetype 0x1bf2 'backpack' 'MiningDropoff' (0 0 0) 'any'
+endwhile
+while counttype 0x3192 'any' 'backpack' > 0
+movetype 0x3192 'backpack' 'MiningDropoff' (0 0 0) 'any'
+endwhile
+while counttype 0x3193 'any' 'backpack' > 0
+movetype 0x3193 'backpack' 'MiningDropoff' (0 0 0) 'any'
+endwhile
+while counttype 0x3195 'any' 'backpack' > 0
+movetype 0x3195 'backpack' 'MiningDropoff' (0 0 0) 'any'
+endwhile
+while counttype 0x3197 'any' 'backpack' > 3
+movetype 0x3197 'backpack' 'MiningDropoff' (0 0 0) 'any'
+endwhile
+while counttype 0x3194 'any' 'backpack' > 0
+movetype 0x3194 'backpack' 'MiningDropoff' (0 0 0) 'any'
+endwhile
+while counttype 0x3198 'any' 'backpack' > 0
+movetype 0x3198 'backpack' 'MiningDropoff' (0 0 0) 'any'
+endwhile
+//recall back to where you were
+useobject OreBook[]
+waitforgump 0x554b87f3 5000
+replygump 0x554b87f3 Runes[]
+pause 2000
+useobject 'self'
+endif
+// kits
+if @counttype 0x1bf2 0 'backpack' > 20
+while @counttype 0x1eb8 0 'backpack' < 2
+usetype! 0x1eb8
+waitforgump 0x38920abd 15000
+replygump 0x38920abd 8
+waitforgump 0x38920abd 15000
+replygump 0x38920abd 23
+endwhile
+//pickaxes
+while @counttype 0xe86 0 'backpack' < 2
+usetype! 0x1eb8
+waitforgump 0x38920abd 15000
+replygump 0x38920abd 8
+waitforgump 0x38920abd 15000
+replygump 0x38920abd 114
+endwhile
+endif
+endwhile
+//feed pet
+if not timerexists 'feedPet'
+createtimer 'feedPet'
+endif
+if timer 'feedPet' >= 3600000
+feed 'FireBeetle' 'Meat' 'any' 1
+pause 500
+if injournal 'happier'
+settimer 'feedPet' 0
+sysmsg 'Pet Fed' 33
+clearjournal
+else
+sysmsg 'Out of Meat!' 33
+useobject 'FireBeetle'
+clearjournal
+stop
+endif
+endif
+endfor
+endfor
+
+
+Chivalry version with fire beetle:
+//1. need 2 full runebooks marked 1 tile south of the mineable locations
+//2. macro assumes you have tinkering
+//3. Set the itemid for MiningDropoff and FireBeetle for your personal setup
+@setalias 'MiningDropoff' 0x411c61df
+@setalias 'FireBeetle' 0x9124a
+if not @findobject 'OreBookOne'
+promptalias 'OreBookOne'
+endif
+if not @findobject 'OreBookTwo'
+promptalias 'OreBookTwo'
+endif
+if not @findobject 'HomeOre'
+promptalias 'HomeOre'
+endif
+if not listexists 'OreBook'
+createlist 'OreBook'
+pushlist 'OreBook' 'OreBookOne'
+pushlist 'OreBook' 'OreBookTwo'
+endif
+if not listexists 'Runes'
+createlist 'Runes'
+pushlist 'Runes' 7
+pushlist 'Runes' 13
+pushlist 'Runes' 19
+pushlist 'Runes' 25
+pushlist 'Runes' 31
+pushlist 'Runes' 37
+pushlist 'Runes' 43
+pushlist 'Runes' 49
+pushlist 'Runes' 55
+pushlist 'Runes' 61
+pushlist 'Runes' 67
+pushlist 'Runes' 73
+pushlist 'Runes' 79
+pushlist 'Runes' 85
+pushlist 'Runes' 91
+pushlist 'Runes' 97
+endif
+For 0 to 'OreBook'
+For 0 to 'Runes'
+pause 250
+clearjournal
+pause 250
+useobject 'FireBeetle'
+pause 700
+useobject OreBook[]
+waitforgump 0x554b87f3 5000
+replygump 0x554b87f3 Runes[]
+//tells you which rune you are on, see runelist above
+sysmsg 'Rune' 33
+sysmsg Runes[] 33
+pause 2000
+useobject 'self'
+pause 500
+while not @injournal 'no metal here'
+//use pickaxe to northern tile until specified weight is reached
+pause 300
+usetype 0xe86
+waitfortarget 1000
+targettileoffset 0 -1 0
+// once weight is reached, smelt
+if weight > 475
+while counttype 0x19b9 'any' 'backpack' > 1
+usetype! 0x19b9
+while waitingfortarget
+endwhile
+target! 'FireBeetle'
+pause 300
+endwhile
+while counttype 0x19b8 'any' 'backpack' > 1
+usetype! 0x19b8
+while waitingfortarget
+endwhile
+target! 'FireBeetle'
+pause 300
+endwhile
+while counttype 0x19ba 'any' 'backpack' > 1
+usetype! 0x19ba
+while waitingfortarget
+endwhile
+target! 'FireBeetle'
+pause 300
+endwhile
+while counttype 0x19b7 'any' 'backpack' > 7
+usetype! 0x19b7
+while waitingfortarget
+endwhile
+target! 'FireBeetle'
+pause 300
+if @injournal 'not enough metal-bearing'
+pause 300
+movetypeoffset 0x19b7 'backpack' 'ground' 0 1 0 'any' 1
+clearjournal
+endif
+endwhile
+endif
+if counttype 0x1bf2 'any' 'backpack' > 1000
+pause 500
+useobject 'FireBeetle'
+pause 700
+useobject 'HomeOre'
+waitforgump 0x554b87f3 5000
+replygump 0x554b87f3 7
+pause 2000
+//Unload Ingots and Jewels
+while counttype 0x1bf2 'any' 'backpack' > 0
+movetype 0x1bf2 'backpack' 'MiningDropoff' (0 0 0) 'any'
+endwhile
+while counttype 0x3192 'any' 'backpack' > 0
+movetype 0x3192 'backpack' 'MiningDropoff' (0 0 0) 'any'
+endwhile
+while counttype 0x3193 'any' 'backpack' > 0
+movetype 0x3193 'backpack' 'MiningDropoff' (0 0 0) 'any'
+endwhile
+while counttype 0x3195 'any' 'backpack' > 0
+movetype 0x3195 'backpack' 'MiningDropoff' (0 0 0) 'any'
+endwhile
+while counttype 0x3197 'any' 'backpack' > 3
+movetype 0x3197 'backpack' 'MiningDropoff' (0 0 0) 'any'
+endwhile
+while counttype 0x3194 'any' 'backpack' > 0
+movetype 0x3194 'backpack' 'MiningDropoff' (0 0 0) 'any'
+endwhile
+while counttype 0x3198 'any' 'backpack' > 0
+movetype 0x3198 'backpack' 'MiningDropoff' (0 0 0) 'any'
+endwhile
+//recall back to where you were
+useobject OreBook[]
+waitforgump 0x554b87f3 5000
+replygump 0x554b87f3 Runes[]
+pause 2000
+useobject 'self'
+endif
+// kits
+if @counttype 0x1bf2 0 'backpack' > 20
+while @counttype 0x1eb8 0 'backpack' < 2
+usetype! 0x1eb8
+waitforgump 0x38920abd 15000
+replygump 0x38920abd 8
+waitforgump 0x38920abd 15000
+replygump 0x38920abd 23
+endwhile
+//pickaxes
+while @counttype 0xe86 0 'backpack' < 2
+usetype! 0x1eb8
+waitforgump 0x38920abd 15000
+replygump 0x38920abd 8
+waitforgump 0x38920abd 15000
+replygump 0x38920abd 114
+endwhile
+endif
+endwhile
+//feed pet
+if not timerexists 'feedPet'
+createtimer 'feedPet'
+endif
+if timer 'feedPet' >= 3600000
+feed 'FireBeetle' 'Meat' 'any' 1
+pause 500
+if injournal 'happier'
+settimer 'feedPet' 0
+sysmsg 'Pet Fed' 33
+clearjournal
+else
+sysmsg 'Out of Meat!' 33
+useobject 'FireBeetle'
+clearjournal
+stop
+endif
+endif
+endfor
+endfor

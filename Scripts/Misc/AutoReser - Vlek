@@ -1,0 +1,35 @@
+//AutoReser v1 by Vlek
+//Automatically ressurects any innocent ghosts within healable distance
+//Make sure to have bandages in your backpack and enough skill to ressurect.
+if not timerexists 'bandagetimer'
+  createtimer 'bandagetimer'
+  settimer 'bandagetimer' 15000
+endif
+while not dead
+  while @findtype 0x192 'any' 'ground' 1 or @findtype 0x193 'any' 'ground' 1
+    if innocent 'found'
+      if usetype 0xe21 'any' 'backpack'
+        waitfortarget 15000
+        @clearjournal
+        target! 'found'
+        while not dead
+          if @injournal 'That is too far away' or @injournal 'That being is not damaged'
+            break
+          elseif @injournal 'You finish' or @injournal 'You are able to'
+            break
+          elseif @injournal 'You are unable to' or @injournal 'You did not stay close enough'
+            break
+          endif
+          pause 250
+        endwhile
+      else
+        sysmsg "You do not have bandages!" 33
+        stop
+      endif
+    else
+      ignoreobject 'found'
+    endif
+  endwhile
+  @clearignorelist
+  pause 1000
+endwhile

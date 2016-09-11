@@ -1,0 +1,155 @@
+// Vogrim's (broken) Potion Restocking
+headmsg '*Restock initiated*' 70
+@clearjournal
+clearignorelist
+@setalias 'restockContainer' '0x401ba08b'
+@setalias 'pouchContainer' '0x41ccbd41'
+@setalias kegContainer 0x41ccbd41
+@setalias emptyKegContainer 0x429e342d
+@setalias healBag 0x406e4e56
+@setalias cureBag 0x401290b7
+@setalias refreshBag 0x424de2e1
+@setalias strBag 0x4172068d
+@setalias agilBag 0x4235f229
+@setalias explBag 0x40ace19c
+@createtimer 'stallTimer'
+@createlist 'bagList'
+@clearlist 'bagList'
+pushlist 'bagList' 'healBag'
+pushlist 'bagList' 'cureBag'
+pushlist 'bagList' 'refreshBag'
+pushlist 'bagList' 'strBag'
+pushlist 'bagList' 'agilBag'
+pushlist 'bagList' 'explBag'
+@createlist 'potionList'
+@clearlist 'potionList'
+pushlist 'potionList' 0xf0c //heal
+pushlist 'potionList' 0xf07 //cure
+pushlist 'potionList' 0xf0b //refresh
+pushlist 'potionList' 0xf09 //strength
+pushlist 'potionList' 0xf08 //agility
+pushlist 'potionList' 0xf0d //explode
+@createlist 'potionAmount'
+@clearlist 'potionAmount'
+pushlist 'potionAmount' 15 //heal
+pushlist 'potionAmount' 15 //cure
+pushlist 'potionAmount' 23 //refresh
+pushlist 'potionAmount' 12 //strength
+pushlist 'potionAmount' 8 //agility
+pushlist 'potionAmount' 56 //explode
+if findalias 'lootPouch'
+  if not x 'lootPouch' == 126 and y 'lootPouch' == 121
+    @unsetalias 'lootPouch'
+  endif
+endif
+if not @findobject 'lootPouch' 'any' 'backpack'
+  headmsg 'Select loot pouch if applicable.' 70
+  promptalias 'lootPouch'
+  if findalias 'lootPouch'
+    moveitemoffset 'lootPouch' 'ground' 0 0 0
+    pause 600
+    moveitem! 'lootPouch' 'backpack' 126 121 0
+    pause 600
+  endif
+endif
+if not @findalias 'lootPouch' and @findtype 0xe79 'any' backpack
+  while @findtype 0xe79 'any' backpack
+    if x 'found' == 126 and y 'found' == 121
+      @setalias 'lootPouch' 'found'
+    else
+      @ignoreobject 'found'
+    endif
+  endwhile
+  clearignorelist
+  if @findobject 'lootPouch' and contents 'lootPouch' == 0
+    useobject 'lootPouch'
+    pause 600
+  endif
+endif
+if not @findalias 'lootPouch'
+  useobject 'pouchContainer'
+  pause 600
+  if @findtype 0xe79 '0' 'pouchContainer'
+    @setalias 'lootPouch' 'found'
+    moveitem! 'found' 'backpack' 126 121 0
+    pause 600
+  else
+    headmsg 'Pouch container empty.  Terminating macro.' 50
+    stop
+  endif
+endif
+useobject 'lootPouch'
+pause 600
+//Engage Restock agent
+if not organizing
+  useobject 'restockContainer'
+  pause 600
+  organizer 'Restock' 'restockContainer' 'lootPouch'
+endif
+//Pause until Restock agent completes
+while organizing
+  pause 50
+endwhile
+pause 600
+while contents kegContainer == 0
+  useobject kegContainer
+  pause 600
+endwhile
+//restock potions
+for 0 to 'potionList'
+  @setalias 'potionBag' 'bagList[0]'
+  while counttype 'potionList[]' 'any' 'backpack' < 'potionAmount[0]'
+    if counttype 0xf0e 'any' 'backpack' == 0
+      movetype 0xf0e 'restockContainer' 'backpack' 0 0 0 'any' 30
+      pause 600
+    endif
+    while contents 'potionBag' == 0
+      useobject 'potionBag'
+      pause 600
+    endwhile
+    if @findtype 0xe79 'any' 'potionBag'
+      @setalias 'fullPouch' 'found'
+    endif
+    //locate keg
+    if @findtype 0x1940 'any' 'potionBag' 'any' 0
+      @setalias 'currentKeg' 'found'
+    else
+      //If keg not found, put one into main bag.
+      settimer 'stallTimer' 0
+      while contents 'fullPouch' == 0
+        if timer 'stallTimer' > 2000
+          headmsg '*Keg not found*'
+          break
+        endif
+        useobject 'fullPouch'
+        pause 600
+      endwhile
+      if @findtype 0x1940 'any' 'fullPouch'
+        @setalias 'currentKeg' 'found'
+        while not @findobject 'currentKeg' 'any' 'potionBag' 'any' 1
+          headmsg 'fuck'
+          moveitem 'currentKeg' 'potionBag'
+          pause 600
+        endwhile
+      endif
+    endif
+    @clearjournal
+    useobject 'currentKeg'
+    pause 600
+    if @injournal 'keg is empty' system
+      moveitem 'currentKeg' 'emptyKegContainer'
+      pause 600
+    endif
+  endwhile
+  poplist 'potionAmount' 'front'
+  poplist 'bagList' 'front'
+endfor
+//Store extra empty bottles
+if @findtype '0xf0e' 'any' 'backpack'
+  movetype '0xf0e' 'backpack' 'restockContainer'
+  pause 600
+endif
+//Check pouch count
+if counttype '0xe79' 'any' 'backpack' < 2
+  playmacro 'Restock Pouches'
+endif

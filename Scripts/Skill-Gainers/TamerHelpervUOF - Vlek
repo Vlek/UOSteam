@@ -1,4 +1,4 @@
-//TamerHelpervUOF By Vlek, Grunt of the Bloodclan (Bloodclan.org)
+//TamerHelpervUOF By Vlek, Rokbozz of the Bloodskuhl Clan (bloodskull.org)
 //Get close to your target, press your associated key.
 //CAUTION: Must watch this script. It's not as intelligent as the regular one.
 if not listexists 'NameTheTamed'

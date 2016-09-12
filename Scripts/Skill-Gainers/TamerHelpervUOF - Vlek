@@ -4,7 +4,7 @@
 if not listexists 'NameTheTamed'
   //Set this name to whatever you want.
   createlist 'NameTheTamed'
-  pushlist 'NameTheTamed' 'JewJew'
+  pushlist 'NameTheTamed' 'Bloodskuhl Orcs'
 endif
 if not listexists 'tameables'
   createlist 'tameables'
